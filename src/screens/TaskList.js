@@ -1,5 +1,12 @@
-import React from 'react';
-import {View, Text, ImageBackground, StyleSheet} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  SafeAreaView,
+  Text,
+  ImageBackground,
+  StyleSheet,
+  FlatList,
+} from 'react-native';
 import Task from '../components/Task';
 import commonStyles from '../commonStyles';
 import todayImage from '../../assets/imgs/today.jpeg';
@@ -7,9 +14,24 @@ import moment from 'moment';
 import 'moment/locale/pt-br';
 
 export default props => {
+  const [tasks, setTasks] = useState([
+    {
+      id: Math.random(),
+      desc: 'comprar Livro',
+      estimateAt: new Date(),
+      doneAt: new Date(),
+    },
+    {
+      id: Math.random(),
+      desc: 'jogar fifa',
+      estimateAt: new Date(),
+      doneAt: null,
+    },
+  ]);
+
   const today = moment().locale('pt-br').format('ddd, D [de] MMMM');
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ImageBackground source={todayImage} style={styles.background}>
         <View style={styles.titleBar}>
           <Text style={styles.title}>Hoje</Text>
@@ -18,9 +40,13 @@ export default props => {
       </ImageBackground>
 
       <View style={styles.taskList}>
-        <Task desc="comprar ps5" estimateAt={new Date()} doneAt={new Date()} />
+        <FlatList
+          data={tasks}
+          keyExtractor={item => `${item.id}`}
+          renderItem={({item}) => <Task {...item} />}
+        />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
