@@ -4,6 +4,7 @@ import commonStyles from '../commonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import 'moment/locale/pt-br';
+Icon.loadFont();
 
 export default props => {
   const doneOrNot =
