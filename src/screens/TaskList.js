@@ -29,6 +29,17 @@ export default props => {
     },
   ]);
 
+  const toggleTask = taskId => {
+    const tasksArray = [...tasks];
+    tasksArray.forEach(task => {
+      if (task.id === taskId) {
+        task.doneAt = task.doneAt ? null : new Date();
+      }
+    });
+
+    setTasks(tasksArray);
+  };
+
   const today = moment().locale('pt-br').format('ddd, D [de] MMMM');
   return (
     <SafeAreaView style={styles.container}>
@@ -43,7 +54,7 @@ export default props => {
         <FlatList
           data={tasks}
           keyExtractor={item => `${item.id}`}
-          renderItem={({item}) => <Task {...item} />}
+          renderItem={({item}) => <Task {...item} toggleTask={toggleTask} />}
         />
       </View>
     </SafeAreaView>
