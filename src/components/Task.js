@@ -1,5 +1,13 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableWithoutFeedback} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from 'react-native';
+
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import commonStyles from '../commonStyles';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
@@ -13,16 +21,28 @@ export default props => {
   const date = props.doneAt ? props.doneAt : props.estimateAt;
   const formatedDate = moment(date).locale('pt-br').format('ddd, D [de] MMMM');
 
+  const getRightContent = () => {
+    return (
+      <TouchableOpacity style={styles.right}>
+        <Icon name="trash" size={30} color="#fff" />
+      </TouchableOpacity>
+    );
+  };
+
   return (
-    <View style={styles.container}>
-      <TouchableWithoutFeedback onPress={() => props.toggleTask(props.id)}>
-        <View style={styles.checkContainer}>{getCheckView(props.doneAt)}</View>
-      </TouchableWithoutFeedback>
-      <View>
-        <Text style={[styles.desc, doneOrNot]}>{props.desc}</Text>
-        <Text style={styles.date}>{formatedDate + ''}</Text>
+    <Swipeable renderRightActions={getRightContent}>
+      <View style={styles.container}>
+        <TouchableWithoutFeedback onPress={() => props.toggleTask(props.id)}>
+          <View style={styles.checkContainer}>
+            {getCheckView(props.doneAt)}
+          </View>
+        </TouchableWithoutFeedback>
+        <View>
+          <Text style={[styles.desc, doneOrNot]}>{props.desc}</Text>
+          <Text style={styles.date}>{formatedDate + ''}</Text>
+        </View>
       </View>
-    </View>
+    </Swipeable>
   );
 };
 
@@ -75,5 +95,12 @@ const styles = StyleSheet.create({
     fontFamily: commonStyles.fontFamily,
     color: commonStyles.colors.subText,
     fontSize: 12,
+  },
+  right: {
+    backgroundColor: 'red',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 20,
   },
 });
