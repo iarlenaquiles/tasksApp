@@ -46,6 +46,14 @@ export default props => {
     return datePicker;
   };
 
+  const save = () => {
+    const newTask = {desc, date};
+
+    props.onSave && props.onSave(newTask);
+    setDate(new Date());
+    setDesc('');
+  };
+
   return (
     <Modal
       transparent={true}
@@ -69,7 +77,7 @@ export default props => {
           <TouchableOpacity onPress={props.onCancel}>
             <Text style={styles.button}>Cancelar</Text>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={save}>
             <Text style={styles.button}>Salvar</Text>
           </TouchableOpacity>
         </View>

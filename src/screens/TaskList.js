@@ -8,6 +8,7 @@ import {
   FlatList,
   Platform,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import Task from '../components/Task';
 import commonStyles from '../commonStyles';
@@ -69,10 +70,32 @@ export default props => {
     filterTasks();
   }, [filterTasks]);
 
+  const addTask = newTask => {
+    if (!newTask.desc || !newTask.desc.trim()) {
+      Alert.alert('Dados inválidos', 'Descriçao nao informada');
+    }
+
+    const newTasks = [...tasks];
+
+    newTasks.push({
+      id: Math.random(),
+      desc: newTask.desc,
+      estimateAt: newTask.date,
+      doneAt: null,
+    });
+
+    setTasks(newTasks);
+    setShowAddTask(false);
+  };
+
   const today = moment().locale('pt-br').format('ddd, D [de] MMMM');
   return (
     <SafeAreaView style={styles.container}>
-      <AddTask isVisible={showAddTask} onCancel={() => setShowAddTask(false)} />
+      <AddTask
+        isVisible={showAddTask}
+        onCancel={() => setShowAddTask(false)}
+        onSave={addTask}
+      />
       <ImageBackground source={todayImage} style={styles.background}>
         <View style={styles.iconBar}>
           <TouchableOpacity onPress={toggleFilter}>
