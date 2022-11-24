@@ -88,6 +88,11 @@ export default props => {
     setShowAddTask(false);
   };
 
+  const deleteTask = id => {
+    const array = tasks.filter(task => task.id !== id);
+    setTasks(array);
+  };
+
   const today = moment().locale('pt-br').format('ddd, D [de] MMMM');
   return (
     <SafeAreaView style={styles.container}>
@@ -116,7 +121,7 @@ export default props => {
         <FlatList
           data={visibleTasks}
           keyExtractor={item => `${item.id}`}
-          renderItem={({item}) => <Task {...item} toggleTask={toggleTask} />}
+          renderItem={({item}) => <Task {...item} toggleTask={toggleTask} onDelete={deleteTask}/>}
         />
       </View>
 
