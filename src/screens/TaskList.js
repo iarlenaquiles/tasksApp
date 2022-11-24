@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   View,
   SafeAreaView,
@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import Task from '../components/Task';
 import commonStyles from '../commonStyles';
 import todayImage from '../../assets/imgs/today.jpeg';
@@ -22,20 +23,7 @@ export default props => {
   const [showDoneTasks, setShowDoneTasks] = useState(true);
   const [showAddTask, setShowAddTask] = useState(false);
   const [visibleTasks, setVisibleTasks] = useState([]);
-  const [tasks, setTasks] = useState([
-    {
-      id: Math.random(),
-      desc: 'comprar Livro',
-      estimateAt: new Date(),
-      doneAt: new Date(),
-    },
-    {
-      id: Math.random(),
-      desc: 'jogar fifa',
-      estimateAt: new Date(),
-      doneAt: null,
-    },
-  ]);
+  const [tasks, setTasks] = useState([]);
 
   const toggleFilter = () => {
     setShowDoneTasks(!showDoneTasks);
@@ -52,7 +40,7 @@ export default props => {
     setTasks(tasksArray);
   };
 
-  const filterTasks = useCallback(() => {
+  const filterTasks = useCallback(async () => {
     let visibleTasksArray = null;
 
     if (showDoneTasks) {
@@ -64,11 +52,24 @@ export default props => {
     }
 
     setVisibleTasks(visibleTasksArray);
+    console.log(visibleTasksArray);
+    await AsyncStorage.setItem('tasksState', JSON.stringify(visibleTasksArray));
   }, [tasks, showDoneTasks]);
+
+  const fetchStorage = async () => {
+    const data = await AsyncStorage.getItem('tasksState');
+    const state = JSON.parse(data) || [];
+    console.log('fetchStorage', data);
+    setTasks(state);
+  };
 
   useEffect(() => {
     filterTasks();
   }, [filterTasks]);
+
+  useEffect(() => {
+    fetchStorage();
+  }, []);
 
   const addTask = newTask => {
     if (!newTask.desc || !newTask.desc.trim()) {
@@ -121,7 +122,9 @@ export default props => {
         <FlatList
           data={visibleTasks}
           keyExtractor={item => `${item.id}`}
-          renderItem={({item}) => <Task {...item} toggleTask={toggleTask} onDelete={deleteTask}/>}
+          renderItem={({item}) => (
+            <Task {...item} toggleTask={toggleTask} onDelete={deleteTask} />
+          )}
         />
       </View>
 
